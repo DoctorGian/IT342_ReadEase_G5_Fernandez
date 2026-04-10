@@ -5,6 +5,14 @@ import './Dashboard.css';
 function Dashboard() {
   const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(false);
+
+  /* NEW: track book status */
+  const [bookStatus, setBookStatus] = useState({
+    1: "Available",
+    2: "Available",
+    3: "Available"
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +53,22 @@ function Dashboard() {
     }
   };
 
+  /* NEW: Borrow button function */
+  const handleBorrow = (id) => {
+    setBookStatus({
+      ...bookStatus,
+      [id]: "Borrowed"
+    });
+  };
+
+  /* NEW: Cancel button function */
+  const handleCancel = (id) => {
+    setBookStatus({
+      ...bookStatus,
+      [id]: "Available"
+    });
+  };
+
   return (
     <div className="layout">
 
@@ -76,14 +100,44 @@ function Dashboard() {
 
           <div className="books-container">
             {[1, 2, 3].map((book) => (
+
               <div key={book} className="book-card">
+
                 <h3>Book Name</h3>
+
                 <p><strong>Author Name:</strong></p>
                 <p><strong>Published Date:</strong></p>
-                <p><strong>Status:</strong></p>
+
+                {/* UPDATED STATUS DISPLAY */}
+                <p>
+                  <strong>Status:</strong> {bookStatus[book]}
+                </p>
+
+                <div className="book-buttons">
+
+                  <button
+                    className="borrow-btn"
+                    onClick={() => handleBorrow(book)}
+                    disabled={bookStatus[book] === "Borrowed"}
+                  >
+                    Borrow Book
+                  </button>
+
+                  <button
+                    className="cancel-btn"
+                    onClick={() => handleCancel(book)}
+                    disabled={bookStatus[book] === "Available"}
+                  >
+                    Cancel
+                  </button>
+
+                </div>
+
               </div>
+
             ))}
           </div>
+
         </div>
 
       </div>
@@ -92,4 +146,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
