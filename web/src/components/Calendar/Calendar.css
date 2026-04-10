@@ -1,0 +1,110 @@
+/* Import base styles from Dashboard.css */
+@import '../Dashboard/Dashboard.css';
+
+/* ===== CALENDAR ===== */
+.calendar-container {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-header h3 {
+  margin: 0;
+  color: #5f6caf;
+  font-size: 24px;
+}
+
+.nav-btn {
+  background: #5f6caf;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.nav-btn:hover {
+  background: #4e5aa3;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day-header {
+  background: #f4f7fb;
+  padding: 10px;
+  text-align: center;
+  font-weight: 600;
+  color: #5f6caf;
+  border-radius: 8px;
+}
+
+.day-cell {
+  background: white;
+  min-height: 80px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.day-cell:hover {
+  background: #f9f9f9;
+}
+
+.day-cell.empty {
+  background: transparent;
+  border: none;
+}
+
+.day-number {
+  font-weight: 600;
+  color: #333;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.event {
+  background: #66bb6a;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 20px;
+  margin-bottom: 2px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  .day-cell {
+    min-height: 60px;
+    padding: 5px;
+  }
+
+  .calendar-container {
+    padding: 15px;
+  }
+}

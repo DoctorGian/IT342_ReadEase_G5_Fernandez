@@ -1,0 +1,144 @@
+/* Import base styles from Dashboard.css */
+@import '../Dashboard/Dashboard.css';
+
+/* ===== REQUEST CARDS ===== */
+.requests-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.request-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.request-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.request-header h3 {
+  margin: 0;
+  color: #5f6caf;
+  font-size: 20px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.request-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.request-details p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.request-details p strong {
+  color: #333;
+  margin-right: 8px;
+}
+
+.request-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cancel-btn, .return-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 500;
+}
+
+.cancel-btn {
+  background-color: #ef5350;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #d32f2f;
+}
+
+.return-btn {
+  background-color: #66bb6a;
+  color: white;
+}
+
+.return-btn:hover {
+  background-color: #4caf50;
+}
+
+.no-requests {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.no-requests p {
+  color: #777;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.browse-btn {
+  padding: 12px 24px;
+  background-color: #5f6caf;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.browse-btn:hover {
+  background-color: #4e5aa3;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .request-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .request-actions {
+    justify-content: center;
+  }
+
+  .request-card {
+    padding: 20px;
+  }
+}

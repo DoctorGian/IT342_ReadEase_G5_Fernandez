@@ -30,6 +30,14 @@ function Dashboard() {
     navigate('/profile');
   };
 
+  const handleMyRequestClick = () => {
+    navigate('/my-request');
+  };
+
+  const handleCalendarClick = () => {
+    navigate('/calendar');
+  };
+
   const handleLogout = async () => {
     setLoading(true);
     try {
@@ -77,8 +85,8 @@ function Dashboard() {
         <h2 className="logo">ReadEase</h2>
         <ul>
           <li className="active">Browse Books</li>
-          <li>My Request</li>
-          <li>Calendar</li>
+          <li onClick={handleMyRequestClick}>My Request</li>
+          <li onClick={handleCalendarClick}>Calendar</li>
           <li onClick={handleProfileClick} className="profile-link">My Profile</li>
           <li onClick={handleLogout} className="logout">
             {loading ? 'Logging out...' : 'Log out'}
