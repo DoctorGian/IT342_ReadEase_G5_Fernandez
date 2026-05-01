@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { bookService } from '../../service/bookService';
 import './Dashboard.css';
 
 function Dashboard() {
   const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [borrowError, setBorrowError] = useState('');
 
-  /* NEW: track book status */
+  /* Book catalog */
+  const [books] = useState([
+    { id: 1, name: "", author: "" },
+    { id: 2, name: "", author: "" },
+    { id: 3, name: "", author: "" }
+  ]);
+
+  /* Track book status */
   const [bookStatus, setBookStatus] = useState({
     1: "Available",
     2: "Available",
@@ -23,8 +32,33 @@ function Dashboard() {
       navigate('/login');
     } else if (email) {
       setUserEmail(email);
+      // Load book statuses from pending requests
+      loadBookStatuses();
     }
   }, [navigate]);
+
+  // Load book statuses based on pending requests
+  const loadBookStatuses = async () => {
+    try {
+      const allRequests = JSON.parse(localStorage.getItem('borrowRequests') || '[]');
+      const statuses = {
+        1: "Available",
+        2: "Available",
+        3: "Available"
+      };
+      
+      // Update status for any pending requests
+      allRequests.forEach(req => {
+        if (req.status === 'Pending') {
+          statuses[req.bookId] = 'Pending';
+        }
+      });
+      
+      setBookStatus(statuses);
+    } catch (err) {
+      console.error('Error loading book statuses:', err);
+    }
+  };
 
   const handleProfileClick = () => {
     navigate('/profile');
@@ -61,20 +95,60 @@ function Dashboard() {
     }
   };
 
-  /* NEW: Borrow button function */
-  const handleBorrow = (id) => {
-    setBookStatus({
-      ...bookStatus,
-      [id]: "Borrowed"
-    });
+  /* Borrow button function */
+  const handleBorrow = async (bookId) => {
+    setLoading(true);
+    setBorrowError('');
+    try {
+      const token = localStorage.getItem('token');
+      const book = books.find(b => b.id === bookId);
+      
+      // Call the book service to create a borrow request
+      await bookService.borrowBook(bookId, book.name, book.author, token);
+      
+      // Update local status to Pending
+      setBookStatus({
+        ...bookStatus,
+        [bookId]: "Pending"
+      });
+      
+      // Navigate to My Request page
+      navigate('/my-request');
+    } catch (err) {
+      console.error('Borrow error:', err);
+      setBorrowError('Failed to create borrow request. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /* NEW: Cancel button function */
-  const handleCancel = (id) => {
-    setBookStatus({
-      ...bookStatus,
-      [id]: "Available"
-    });
+  /* Cancel button function */
+  const handleCancel = async (bookId) => {
+    try {
+      setBorrowError('');
+      const token = localStorage.getItem('token');
+      const allRequests = await bookService.getRequests(token);
+      
+      // Find the pending request for this book
+      const pendingRequest = allRequests.find(req => req.bookId === bookId && req.status === 'Pending');
+      
+      if (pendingRequest) {
+        // Cancel the request
+        await bookService.cancelRequest(pendingRequest.id, token);
+        
+        // Reset the local status
+        setBookStatus({
+          ...bookStatus,
+          [bookId]: "Available"
+        });
+        
+        // Navigate to My Request page to see it removed
+        navigate('/my-request');
+      }
+    } catch (err) {
+      console.error('Cancel error:', err);
+      setBorrowError('Failed to cancel request. Please try again.');
+    }
   };
 
   return (
@@ -106,37 +180,35 @@ function Dashboard() {
           <h2>Browse Books</h2>
           <p>Find and Borrow books</p>
 
-          <div className="books-container">
-            {[1, 2, 3].map((book) => (
+          {borrowError && (
+            <div className="error-message">
+              {borrowError}
+            </div>
+          )}
 
-              <div key={book} className="book-card">
+          <div className="books-container">
+            {books.map((book) => (
+
+              <div key={book.id} className="book-card">
 
                 <h3>Book Name</h3>
 
                 <p><strong>Author Name:</strong></p>
                 <p><strong>Published Date:</strong></p>
 
-                {/* UPDATED STATUS DISPLAY */}
+                {/* Status Display */}
                 <p>
-                  <strong>Status:</strong> {bookStatus[book]}
+                  <strong>Status:</strong> {bookStatus[book.id]}
                 </p>
 
                 <div className="book-buttons">
 
                   <button
                     className="borrow-btn"
-                    onClick={() => handleBorrow(book)}
-                    disabled={bookStatus[book] === "Borrowed"}
+                    onClick={() => handleBorrow(book.id)}
+                    disabled={bookStatus[book.id] === "Pending" || loading}
                   >
-                    Borrow Book
-                  </button>
-
-                  <button
-                    className="cancel-btn"
-                    onClick={() => handleCancel(book)}
-                    disabled={bookStatus[book] === "Available"}
-                  >
-                    Cancel
+                    {loading ? 'Processing...' : 'Borrow Book'}
                   </button>
 
                 </div>

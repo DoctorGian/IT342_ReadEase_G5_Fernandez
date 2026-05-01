@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { bookService } from '../../service/bookService';
 import './MyRequest.css';
 
 function MyRequest() {
   const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState([]);
+  const [cancelError, setCancelError] = useState('');
 
   const navigate = useNavigate();
 
@@ -17,8 +19,22 @@ function MyRequest() {
       navigate('/login');
     } else if (email) {
       setUserEmail(email);
+      // Load requests from bookService
+      loadRequests(token);
     }
   }, [navigate]);
+
+  // Load requests from storage
+  const loadRequests = async (token) => {
+    try {
+      const allRequests = await bookService.getRequests(token);
+      // Filter out cancelled requests to only show active ones
+      const activeRequests = allRequests.filter(req => req.status !== 'Cancelled');
+      setRequests(activeRequests);
+    } catch (err) {
+      console.error('Error loading requests:', err);
+    }
+  };
 
   const handleProfileClick = () => {
     navigate('/profile');
@@ -55,10 +71,18 @@ function MyRequest() {
     }
   };
 
-  const handleCancelRequest = (id) => {
-    setRequests(requests.map(request =>
-      request.id === id ? { ...request, status: 'Cancelled' } : request
-    ));
+  const handleCancelRequest = async (id) => {
+    try {
+      setCancelError('');
+      const token = localStorage.getItem('token');
+      await bookService.cancelRequest(id, token);
+      
+      // Remove the cancelled request from the list
+      setRequests(requests.filter(request => request.id !== id));
+    } catch (err) {
+      console.error('Error cancelling request:', err);
+      setCancelError('Failed to cancel request. Please try again.');
+    }
   };
 
   const getStatusColor = (status) => {
@@ -96,6 +120,12 @@ function MyRequest() {
         <div className="content">
           <h2>My Requests</h2>
           <p>Track your book borrowing requests</p>
+
+          {cancelError && (
+            <div className="error-message">
+              {cancelError}
+            </div>
+          )}
 
           <div className="requests-container">
             {requests.length === 0 ? (
