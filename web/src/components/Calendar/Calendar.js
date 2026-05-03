@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../service/authService';
 import './Calendar.css';
 
 function Calendar() {
@@ -35,14 +36,7 @@ function Calendar() {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      await fetch('http://localhost:8080/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await authService.logout();
 
       localStorage.removeItem('token');
       localStorage.removeItem('userEmail');

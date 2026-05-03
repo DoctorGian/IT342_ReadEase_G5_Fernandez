@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authService } from '../../service/authService';
 import './Register.css';
 
 function Register() {
@@ -37,23 +38,15 @@ function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const result = await authService.register(name, email, password);
 
-      const data = await response.json();
-
-      if (data.success) {
-        setSuccess('Registration successful! Redirecting to login...');
+      if (result.success) {
+        setSuccess('Registration successful! Check your email for confirmation if enabled, then login.');
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        setError(data.message || 'Registration failed');
+        setError(result.message || 'Registration failed');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');

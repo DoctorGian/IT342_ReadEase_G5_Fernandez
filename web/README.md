@@ -68,3 +68,27 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Supabase setup
+
+- Copy `.env.local.example` to `.env.local` in the `web` folder and fill your Supabase values.
+- Do NOT commit your `.env.local` or direct database passwords to the repository.
+- The frontend reads `REACT_APP_SUPABASE_URL` and `REACT_APP_SUPABASE_ANON_KEY` at runtime.
+
+To create the `borrow_requests` table used by the app, run the SQL in `supabase_setup.sql`.
+
+If you want to paste directly, use this SQL:
+
+```sql
+create table borrow_requests (
+	id bigint generated always as identity primary key,
+	user_id uuid,
+	book_id text,
+	book_name text,
+	author text,
+	status text,
+	request_date timestamptz,
+	due_date timestamptz
+);
+```
+

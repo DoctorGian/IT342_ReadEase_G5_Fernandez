@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { bookService } from '../../service/bookService';
+import { authService } from '../../service/authService';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -40,7 +41,7 @@ function Dashboard() {
   // Load book statuses based on pending requests
   const loadBookStatuses = async () => {
     try {
-      const allRequests = JSON.parse(localStorage.getItem('borrowRequests') || '[]');
+      const allRequests = await bookService.getRequests();
       const statuses = {
         1: "Available",
         2: "Available",
@@ -50,7 +51,7 @@ function Dashboard() {
       // Update status for any pending requests
       allRequests.forEach(req => {
         if (req.status === 'Pending') {
-          statuses[req.bookId] = 'Pending';
+          statuses[Number(req.book_id)] = 'Pending';
         }
       });
       
@@ -75,14 +76,7 @@ function Dashboard() {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      await fetch('http://localhost:8080/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await authService.logout();
 
       localStorage.removeItem('token');
       localStorage.removeItem('userEmail');
@@ -100,11 +94,10 @@ function Dashboard() {
     setLoading(true);
     setBorrowError('');
     try {
-      const token = localStorage.getItem('token');
       const book = books.find(b => b.id === bookId);
       
       // Call the book service to create a borrow request
-      await bookService.borrowBook(bookId, book.name, book.author, token);
+      await bookService.borrowBook(bookId, book.name, book.author);
       
       // Update local status to Pending
       setBookStatus({
@@ -126,15 +119,14 @@ function Dashboard() {
   const handleCancel = async (bookId) => {
     try {
       setBorrowError('');
-      const token = localStorage.getItem('token');
-      const allRequests = await bookService.getRequests(token);
+      const allRequests = await bookService.getRequests();
       
       // Find the pending request for this book
-      const pendingRequest = allRequests.find(req => req.bookId === bookId && req.status === 'Pending');
+      const pendingRequest = allRequests.find(req => Number(req.book_id) === bookId && req.status === 'Pending');
       
       if (pendingRequest) {
         // Cancel the request
-        await bookService.cancelRequest(pendingRequest.id, token);
+        await bookService.cancelRequest(pendingRequest.id);
         
         // Reset the local status
         setBookStatus({

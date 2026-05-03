@@ -9,4 +9,4 @@ public class ReadeaseApplication {
     public static void main(String[] args) {
         SpringApplication.run(ReadeaseApplication.class, args);
     }
-} 
+}

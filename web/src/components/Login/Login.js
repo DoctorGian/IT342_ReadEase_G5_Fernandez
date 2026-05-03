@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authService } from '../../service/authService';
 import './Login.css';
 
 function Login() {
@@ -15,24 +16,17 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const result = await authService.login(email, password);
 
-      const data = await response.json();
-
-      if (data.success) {
-        // Store token, user email, and user name in localStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userEmail', data.user?.email || email);
-        localStorage.setItem('userName', data.user?.name || '');
+      if (result.success) {
+        const session = result.data?.session;
+        const user = result.data?.user;
+        localStorage.setItem('token', session?.access_token || 'supabase-session');
+        localStorage.setItem('userEmail', user?.email || email);
+        localStorage.setItem('userName', user?.user_metadata?.name || '');
         navigate('/dashboard');
       } else {
-        setError(data.message || 'Login failed');
+        setError(result.message || 'Login failed');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');

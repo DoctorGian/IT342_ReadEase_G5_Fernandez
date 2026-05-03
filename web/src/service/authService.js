@@ -1,16 +1,17 @@
-const API_BASE_URL = 'http://localhost:8080/api/auth';
+import supabase from './supabaseClient';
 
 export const authService = {
   register: async (name, email, password) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name } },
       });
-      return await response.json();
+      if (error) {
+        return { success: false, data: null, error, message: error.message };
+      }
+      return { success: true, data, error: null, message: null };
     } catch (error) {
       console.error('Register error:', error);
       throw error;
@@ -19,46 +20,40 @@ export const authService = {
 
   login: async (email, password) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      return await response.json();
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        return { success: false, data: null, error, message: error.message };
+      }
+      return { success: true, data, error: null, message: null };
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
   },
 
-  logout: async (token) => {
+  logout: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/logout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      return await response.json();
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        return { success: false, error, message: error.message };
+      }
+      return { success: true, error: null, message: null };
     } catch (error) {
       console.error('Logout error:', error);
       throw error;
     }
   },
 
-  validateToken: async (token) => {
+  validateToken: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/validate`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      return await response.json();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      if (error) {
+        return { success: false, user: null, error, message: error.message };
+      }
+      return { success: true, user, error: null, message: null };
     } catch (error) {
       console.error('Token validation error:', error);
       throw error;

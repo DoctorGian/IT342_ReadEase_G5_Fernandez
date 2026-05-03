@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { bookService } from '../../service/bookService';
+import { authService } from '../../service/authService';
 import './MyRequest.css';
 
 function MyRequest() {
@@ -51,14 +52,7 @@ function MyRequest() {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      await fetch('http://localhost:8080/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await authService.logout();
 
       localStorage.removeItem('token');
       localStorage.removeItem('userEmail');
@@ -139,7 +133,7 @@ function MyRequest() {
               requests.map((request) => (
                 <div key={request.id} className="request-card">
                   <div className="request-header">
-                    <h3>{request.bookName}</h3>
+                    <h3>{request.book_name}</h3>
                     <span
                       className="status-badge"
                       style={{ backgroundColor: getStatusColor(request.status) }}
@@ -150,9 +144,9 @@ function MyRequest() {
 
                   <div className="request-details">
                     <p><strong>Author:</strong> {request.author}</p>
-                    <p><strong>Request Date:</strong> {request.requestDate}</p>
-                    {request.dueDate && (
-                      <p><strong>Due Date:</strong> {request.dueDate}</p>
+                    <p><strong>Request Date:</strong> {request.request_date ? new Date(request.request_date).toLocaleDateString() : ''}</p>
+                    {request.due_date && (
+                      <p><strong>Due Date:</strong> {new Date(request.due_date).toLocaleDateString()}</p>
                     )}
                   </div>
 
