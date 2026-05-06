@@ -31,6 +31,43 @@ export const authService = {
     }
   },
 
+  getUserContext: async () => {
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        return { success: false, data: null, error: authError, message: authError.message };
+      }
+
+      const user = authData?.user || null;
+      if (!user) {
+        return { success: false, data: null, error: null, message: 'No active session found.' };
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, role')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        return { success: false, data: null, error: profileError, message: profileError.message };
+      }
+
+      return {
+        success: true,
+        data: {
+          user,
+          profile: profile || null,
+        },
+        error: null,
+        message: null,
+      };
+    } catch (error) {
+      console.error('Get user context error:', error);
+      throw error;
+    }
+  },
+
   logout: async () => {
     try {
       const { error } = await supabase.auth.signOut();
