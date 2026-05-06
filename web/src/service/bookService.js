@@ -226,6 +226,14 @@ export const bookService = {
         const requests = requestData || [];
         console.log('Fetched borrow requests count:', requests.length, 'Error:', requestError);
 
+        if (requests.length === 0) {
+          return requests;
+        }
+
+        if (requests.some((request) => request.requester_name)) {
+          return requests;
+        }
+
         const uniqueUserIds = [...new Set(requests.map((request) => request.user_id).filter(Boolean))];
 
         if (uniqueUserIds.length === 0) {

@@ -47,7 +47,6 @@ $$;
 
 grant usage on schema public to authenticated;
 grant execute on function public.reload_schema_cache() to authenticated;
-grant execute on function public.admin_get_all_borrow_requests() to authenticated;
 grant select, insert, update, delete on public.profiles to authenticated;
 grant select, insert, update, delete on public.books to authenticated;
 grant select, insert, update, delete on public.borrow_requests to authenticated;
@@ -83,6 +82,8 @@ begin
     order by request_date desc;
 end;
 $$;
+
+grant execute on function public.admin_get_all_borrow_requests() to authenticated;
 
 alter table public.profiles enable row level security;
 alter table public.books enable row level security;
