@@ -1,19 +1,122 @@
 .profile-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f4f7fb 0%, #eef2ff 100%);
   padding: 20px;
+}
+
+.profile-admin-layout {
+  padding: 0;
+  background:
+    radial-gradient(circle at top left, rgba(243, 198, 115, 0.22), transparent 28%),
+    linear-gradient(135deg, #0a1220 0%, #14213d 45%, #f5f1e8 45%, #f5f1e8 100%);
+}
+
+.profile-admin-main {
+  padding: 28px;
+}
+
+.profile-hero {
+  margin-bottom: 24px;
+}
+
+.profile-hero-actions {
+  min-width: 240px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-summary-card.total {
+  background: linear-gradient(135deg, #13213b, #20406f);
+}
+
+.profile-summary-card.total span,
+.profile-summary-card.total strong {
+  color: #fff7ea;
+}
+
+.profile-admin-card {
+  margin-top: 24px;
+}
+
+.profile-admin-card-header {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-avatar-large {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #13213b, #20406f);
+  color: #fff7ea;
+  font-size: 34px;
+  font-weight: 700;
+  box-shadow: 0 16px 32px rgba(8, 17, 31, 0.16);
+}
+
+.profile-description {
+  margin: 6px 0 0;
+  color: #667189;
+}
+
+.profile-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-detail-item {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(95, 108, 175, 0.06);
+  border: 1px solid rgba(19, 33, 59, 0.08);
+}
+
+.profile-detail-item span,
+.field-label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7387;
+  margin-bottom: 6px;
+}
+
+.profile-detail-item strong {
+  color: #13213b;
+}
+
+.profile-action-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .profile-header {
   max-width: 600px;
   margin: 0 auto 40px;
-  color: white;
+  color: #13213b;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(19, 33, 59, 0.08);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 12px 30px rgba(8, 17, 31, 0.06);
 }
 
 .back-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid white;
+  background: #ffffff;
+  color: #0a1220;
+  border: 1px solid rgba(10, 18, 32, 0.16);
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
@@ -24,7 +127,7 @@
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #f4f7fb;
   transform: translateX(-5px);
 }
 
@@ -74,12 +177,12 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #13213b 0%, #20406f 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 40px;
-  color: white;
+  color: #fff7ea;
   font-weight: bold;
   margin: 0 auto 20px;
   box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
@@ -107,6 +210,10 @@
   text-transform: uppercase;
   margin-bottom: 8px;
   letter-spacing: 1px;
+}
+
+.field-label {
+  margin-bottom: 8px;
 }
 
 .info-value {
@@ -142,8 +249,8 @@
 }
 
 .btn-edit {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #13213b;
+  color: #fff7ea;
 }
 
 .btn-edit:hover {
@@ -169,8 +276,8 @@
   justify-content: center;
   min-height: 100vh;
   font-size: 20px;
-  color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #13213b;
+  background: linear-gradient(135deg, #eef2ff 0%, #f4f7fb 100%);
 }
 
 /* Responsive Design */
@@ -200,5 +307,18 @@
   .back-btn {
     font-size: 12px;
     padding: 8px 15px;
+  }
+
+  .profile-summary-grid,
+  .profile-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-admin-card-header {
+    align-items: flex-start;
+  }
+
+  .profile-action-row {
+    flex-direction: column;
   }
 }

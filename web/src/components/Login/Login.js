@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../service/authService';
+import { sessionState } from '../../service/sessionState';
 import './Login.css';
 
 function Login() {
@@ -21,10 +22,21 @@ function Login() {
       if (result.success) {
         const session = result.data?.session;
         const user = result.data?.user;
-        localStorage.setItem('token', session?.access_token || 'supabase-session');
-        localStorage.setItem('userEmail', user?.email || email);
-        localStorage.setItem('userName', user?.user_metadata?.name || '');
-        navigate('/dashboard');
+        const context = await authService.getUserContext();
+        const profile = context.success ? context.data?.profile : null;
+        const resolvedEmail = user?.email || email;
+        const resolvedName = profile?.full_name || user?.user_metadata?.name || '';
+        const resolvedRole = (profile?.role || (resolvedEmail === 'cit.library@cit.edu' ? 'admin' : 'student')).toLowerCase();
+
+        // Use sessionStorage for tab-specific session isolation
+        sessionState.setAll({
+          token: session?.access_token || 'supabase-session',
+          userId: user?.id || context.data?.user?.id || '',
+          userEmail: resolvedEmail,
+          userName: resolvedName,
+          userRole: resolvedRole,
+        });
+        navigate(resolvedRole === 'admin' ? '/admin/dashboard' : '/dashboard');
       } else {
         setError(result.message || 'Login failed');
       }
